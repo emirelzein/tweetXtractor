@@ -3,7 +3,7 @@ from twscrape import API, gather
 from twscrape.logger import set_log_level
 from dotenv import load_dotenv
 import os
-from openai import OpenAI
+from openai import AsyncOpenAI
 import re
 from flask import Flask
 
@@ -13,8 +13,8 @@ app = Flask(__name__)
 def ScrapeThenAnalyze(account_name):
     print(f"Running ScrapeThenAnalyze() for {account_name}")
     data = asyncio.run(scraper(account_name)) 
-    analysis = analyze(account_name, data)
-    return {"analysis": analysis}
+    analysis = asyncio.run(analyze(data, account_name))
+    return analysis
 
 load_dotenv()
 
@@ -68,30 +68,41 @@ async def scraper(targetUser):
     return parsedContent
 
 
-def analyze(targetUser,tweetList):
+# GPT Section
 
-    openai_key = os.environ.get("OPENAI_KEY")
-
-    client = OpenAI(api_key=openai_key)
-
-    prompt = "Analyze these tweets from twitter user " + targetUser + ":" + ''.join(tweetList)
-
-    chat_completion = client.chat.completions.create(
+# Function to ask GPT asynchronously
+async def ask_gpt_async(client, prompt):
+    print("Loading answer to prompt...")
+    chat_completion = await client.chat.completions.create(
         messages=[
             {
                 "role": "user",
                 "content": prompt,
             }
         ],
-        model="gpt-3.5-turbo"
+        model="gpt-3.5-turbo",
     )
-
-    print(chat_completion.choices[0].message.content)
-
+    print("Answer:", chat_completion.choices[0].message.content)
     return chat_completion.choices[0].message.content
 
-    
+# Function analyze a list of text
+async def analyze(tweetList, account_name):
 
+    client = AsyncOpenAI(
+        api_key=os.environ.get("OPENAI_API_KEY"))
+
+    tweetListString = ''.join(tweetList)
+    prompts = {"topic": "What are the main topics in this account's tweets:" + tweetListString,
+               "language": "What is the language used in this account's tweets: " + tweetListString,
+               "sentiment": "What are the main sentiments in this account's tweets: " + tweetListString,
+               "analysis": "Analyze these tweets from Twitter user " + account_name + " and respond in the form of a text: " + tweetListString}
+
+    tasks = {prompt: ask_gpt_async(client, prompts[prompt]) for prompt in prompts}
+    responses = await asyncio.gather(*tasks.values())
+
+    result_dict = dict(zip(tasks.keys(), responses))
+
+    return result_dict
 
 
 if __name__ == "__main__":
