@@ -6,7 +6,21 @@ import os
 from openai import OpenAI
 import re
 from llama_index import Document, VectorStoreIndex
+from flask import Flask
 
+app = Flask(__name__)
+
+# Example API Route
+
+@app.route("/members")
+def members():
+    return {"members": ["Member1", "Memeber2", "Member3"]}
+
+@app.route("/ScrapeThenAnalyze")
+def ScrapeThenAnalyze():
+    data = asyncio.run(scraper("QatarAirways")) 
+    analysis = analyze("QatarAirways",data)
+    return {"analysis": analysis}
 
 load_dotenv()
 
@@ -24,7 +38,6 @@ async def scraper(targetUser):
 
 
     content = []
-
     lst = await gather(api.search("(from:" + targetUser + ")", limit=20))
 
     for twt in lst:
@@ -59,13 +72,13 @@ async def scraper(targetUser):
     return parsedContent
 
 
-def analyze(tweetList):
+def analyze(targetUser,tweetList):
 
     openai_key = os.environ.get("OPENAI_KEY")
 
     client = OpenAI(api_key=openai_key)
 
-    prompt = "Analyze these tweets and determine what this account mainly talks about:" + ''.join(tweetList)
+    prompt = "Analyze these tweets from twitter user " + targetUser + ":" + ''.join(tweetList)
 
     chat_completion = client.chat.completions.create(
         messages=[
@@ -84,8 +97,8 @@ def analyze(tweetList):
 
 
 if __name__ == "__main__":
-
-    ret = asyncio.run(scraper("QatarAirways"))
-    print(ret)
-    print(analyze(ret))
+    app.run(debug=True)
+   # ret = asyncio.run(scraper("QatarAirways"))
+   # print(ret)
+   # print(analyze("QatarAirways",ret))
     
