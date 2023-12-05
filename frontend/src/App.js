@@ -30,23 +30,28 @@ function App() {
       <div>
         {submitButtonClicked ?
             (typeof data.analysis === 'undefined') ? (
-                <div class="loading-symbol"><div class="loadingio-spinner-bean-eater-cc9fnnnnkov"><div class="ldio-n5u2mvqlw1">
+                <div className="loading-symbol"><div className="loadingio-spinner-bean-eater-cc9fnnnnkov"><div className="ldio-n5u2mvqlw1">
 <div><div></div><div></div><div></div></div><div><div></div><div></div><div></div></div>
 </div></div></div>
             ): (
-                <div class="grid-container">
-                    <div class="grid-item"><h2>General Analysis</h2><p>{data.analysis}</p></div>
-                    <div class="grid-item"><h2>Main Sentiments</h2><p >{data.sentiment}</p></div>
-                    <div class="grid-item"><h2>Main Topics</h2><p>{data.topic}</p></div>
-                    <div class="grid-item"><h2>Language Used</h2><p>{data.language}</p></div>
-                    <button type="submit" class="btn btn-primary btn-block btn-large" onClick = {()=>{setsubmitButtonClicked(false); data.analysis = undefined;} }>Analyze Another Account</button>  
+                <div className="grid-container">
+                    <div className="grid-item"><h2>General Analysis</h2><p>{data.analysis}</p></div>
+                    <div className="grid-item"><h2>Main Sentiments</h2><p >{data.sentiment}</p></div>
+                    <div className="grid-item"><h2>Main Topics</h2><p>{data.topic}</p></div>
+                    <div className="grid-item"><h2>Language Used</h2><p>{data.language}</p></div>
+                    <button type="submit" className="btn btn-primary btn-block btn-large" onClick = {()=>{setsubmitButtonClicked(false); data.analysis = undefined;} }>Analyze Another Account</button>  
                 </div> 
             )
-          :	      
-          <div class="login">
-            <h1>Enter Twitter Handle:</h1>        
-            <input type="text" name="u" placeholder="@" required="required" id ="twitterhandle" />
-            <button type="submit" class="btn btn-primary btn-block btn-large" onClick = {()=>analyze()}>Submit</button>  
+          :	 
+          <div>     
+            <img src ="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" width="128" height="128" />
+            <p className ="logo_left">tweet</p>
+            <p className ="logo_right">tractor</p>
+            <div className="login">
+              <h1>Enter X Handle:</h1>        
+              <input type="text" name="u" placeholder="@" required="required" id ="twitterhandle" />
+              <button type="submit" className="btn btn-primary btn-block btn-large" onClick = {()=>analyze()}>Submit</button>  
+            </div>
           </div>
         }
       </div>
