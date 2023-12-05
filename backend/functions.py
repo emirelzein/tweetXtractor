@@ -5,21 +5,15 @@ from dotenv import load_dotenv
 import os
 from openai import OpenAI
 import re
-from llama_index import Document, VectorStoreIndex
 from flask import Flask
 
 app = Flask(__name__)
 
-# Example API Route
-
-@app.route("/members")
-def members():
-    return {"members": ["Member1", "Memeber2", "Member3"]}
-
-@app.route("/ScrapeThenAnalyze")
-def ScrapeThenAnalyze():
-    data = asyncio.run(scraper("QatarAirways")) 
-    analysis = analyze("QatarAirways",data)
+@app.route("/ScrapeThenAnalyze/<account_name>")
+def ScrapeThenAnalyze(account_name):
+    print(f"Running ScrapeThenAnalyze() for {account_name}")
+    data = asyncio.run(scraper(account_name)) 
+    analysis = analyze(account_name, data)
     return {"analysis": analysis}
 
 load_dotenv()
@@ -68,6 +62,8 @@ async def scraper(targetUser):
     for strg in content:
         temp = emoji_pattern.sub(r'', strg)
         parsedContent.append(re.sub(pattern, '', temp))
+    
+    print(parsedContent)
 
     return parsedContent
 
@@ -90,6 +86,8 @@ def analyze(targetUser,tweetList):
         model="gpt-3.5-turbo"
     )
 
+    print(chat_completion.choices[0].message.content)
+
     return chat_completion.choices[0].message.content
 
     
@@ -98,7 +96,4 @@ def analyze(targetUser,tweetList):
 
 if __name__ == "__main__":
     app.run(debug=True)
-   # ret = asyncio.run(scraper("QatarAirways"))
-   # print(ret)
-   # print(analyze("QatarAirways",ret))
     
