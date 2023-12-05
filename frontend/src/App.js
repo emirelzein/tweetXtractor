@@ -27,12 +27,20 @@ function App() {
 
   return(
     <div>
-      <div class="login">
-        {submitButtonClicked?
+      <div>
+        {submitButtonClicked ?
             (typeof data.analysis === 'undefined') ? (
-              <p class="flex-container">Loading...</p>
+                <div class="loading-symbol"><div class="loadingio-spinner-bean-eater-cc9fnnnnkov"><div class="ldio-n5u2mvqlw1">
+<div><div></div><div></div><div></div></div><div><div></div><div></div><div></div></div>
+</div></div></div>
             ): (
-               <p class="flex-container">{data.analysis}</p>
+                <div class="grid-container">
+                    <div class="grid-item"><h2>General Analysis</h2><p>{data.analysis}</p></div>
+                    <div class="grid-item"><h2>Main Sentiments</h2><p >{data.sentiment}</p></div>
+                    <div class="grid-item"><h2>Main Topics</h2><p>{data.topic}</p></div>
+                    <div class="grid-item"><h2>Language Used</h2><p>{data.language}</p></div>
+                    <button type="submit" class="btn btn-primary btn-block btn-large" onClick = {()=>{setsubmitButtonClicked(false); data.analysis = undefined;} }>Analyze Another Account</button>  
+                </div> 
             )
           :	      
           <div class="login">

@@ -95,7 +95,7 @@ async def analyze(tweetList, account_name):
     prompts = {"topic": "What are the main topics in this account's tweets:" + tweetListString,
                "language": "What is the language used in this account's tweets: " + tweetListString,
                "sentiment": "What are the main sentiments in this account's tweets: " + tweetListString,
-               "analysis": "Analyze these tweets from Twitter user " + account_name + " and respond in the form of a text: " + tweetListString}
+               "analysis": "Briefly analyze the tweets from Twitter user " + account_name + " and respond in the form of a text: " + tweetListString}
 
     tasks = {prompt: ask_gpt_async(client, prompts[prompt]) for prompt in prompts}
     responses = await asyncio.gather(*tasks.values())
